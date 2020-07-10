@@ -70,7 +70,7 @@ class LP_first_order
 
 		double ewt = exp( -wc*Te );
 		_Cy1 = ewt;
-		_Cx0 = wc;
+		_Cx0 = 1 - ewt;
 		_Cx1 = 0;
 	}
 

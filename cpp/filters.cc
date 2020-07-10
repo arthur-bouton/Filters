@@ -114,7 +114,7 @@ LP_first_order_impulse_matching<T>::LP_first_order_impulse_matching( const float
 {
 	double ewt = exp( -wc*Te );
 	this->_Cy1 = ewt;
-	this->_Cx0 = wc;
+	this->_Cx0 = 1 - ewt;
 	this->_Cx1 = 0;
 }
 
