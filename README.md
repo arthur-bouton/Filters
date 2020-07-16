@@ -1,4 +1,7 @@
-# Recursive filters for C++
+# Recursive filters for C++ and Python
+
+
+## C++
 
 
 ### Files
@@ -114,7 +117,7 @@ main()
 }
 ```
 
-If the input and output point to the same variable, it provides a way of filtering this variable with minimal and non intrusive changes in the code.
+If the input and output point to the same variable, it provides a way of filtering this variable with minimal and non intrusive changes in the code:
 
 ```
 #include "cpp/filters.hh"
@@ -153,3 +156,18 @@ Which gives the figure below:<br />
 	<img src="second_order_output.png?raw=true"
 	title="Second order filter output">
 </p>
+
+
+## Python
+
+To feed the filter, call its instance direclty. It can be given a single new value at a time, or a list of successive values at once:
+
+```
+from python.filters import *
+
+input_list = [ 0 ]*10 + [ 1 ]*190
+
+filter = LP_second_order( 0.01, 2*3.14, 0.7, transform='bilinear' )
+
+output_list = filter( input_list )
+```
