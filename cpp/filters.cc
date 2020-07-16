@@ -25,8 +25,6 @@ namespace filters
 {
 
 
-template class LP_second_order_bilinear<float>;
-template class LP_second_order_bilinear<double>;
 template class LP_first_order_bilinear<float>;
 template class LP_first_order_bilinear<double>;
 template class LP_first_order_homographic<float>;
@@ -35,6 +33,8 @@ template class LP_first_order_step_matching<float>;
 template class LP_first_order_step_matching<double>;
 template class LP_first_order_impulse_matching<float>;
 template class LP_first_order_impulse_matching<double>;
+template class LP_second_order_bilinear<float>;
+template class LP_second_order_bilinear<double>;
 
 
 template <class T>

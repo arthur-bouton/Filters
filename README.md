@@ -44,7 +44,7 @@ main()
 {
 	filters::ptr_t<double> filter;
 
-	filter = filters::ptr_t<double>( new filters::LP_second_order_bilinear<double>( 0.02, 2*3.14, 0.7 ) );
+	filter = filters::ptr_t<double>( new filters::LP_second_order_bilinear<double>( 0.01, 2*3.14, 0.7 ) );
 	
 	double input = 0;
 	for ( int i = 0 ; i < 200 ; i++ )
@@ -72,7 +72,7 @@ main()
 {
 	filters::LP_second_order<double> filter;
 
-	filter.init_bilinear( 0.02, 2*3.14, 0.7 );
+	filter.init_bilinear( 0.01, 2*3.14, 0.7 );
 	
 	double input = 0;
 	for ( int i = 0 ; i < 200 ; i++ )
@@ -89,8 +89,60 @@ main()
 }
 ```
 
+
+In any case, the input and output of the filter can be set with a pointer so that the values are changed directly when calling the method `update()` with no argument (a pointer must be used for the filter object though):
+
+```
+#include "cpp/filters.hh"
+
+main()
+{
+	double input, output;
+
+	auto filter = filters::ptr_t<double>( new filters::LP_second_order_bilinear<double>( 0.01, 2*3.14, 0.7, &input, &output ) );
+
+	input = 0;
+	for ( int i = 0 ; i < 200 ; i++ )
+	{
+		if ( i > 10 )
+			input = 1;
+
+		filter->update();
+
+		printf( "%f %f\n", input, output );
+	}
+}
+```
+
+If the input and output point to the same variable, it provides a way of filtering this variable with minimal and non intrusive changes in the code.
+
+```
+#include "cpp/filters.hh"
+
+main()
+{
+	double variable;
+
+	auto filter = filters::ptr_t<double>( new filters::LP_second_order_bilinear<double>( 0.01, 2*3.14, 0.7, &variable, &variable ) );
+
+	variable = 0;
+	for ( int i = 0 ; i < 200 ; i++ )
+	{
+		if ( i > 10 )
+			variable = 1;
+
+		filter->update();
+
+		printf( "%f\n", variable );
+	}
+}
+```
+
+
 These examples, once copied in a file *test.cc*, can be compiled with:<br />
-`$ g++ -std=c++11 test.cc cpp/filters.cc -o test`
+`$ g++ -std=c++11 test.cc cpp/filters.cc -o test`<br />
+Or if *filters2.hh* is used, there is no separate compilation:<br />
+`$ g++ -std=c++11 test.cc -o test`
 
 Then, with the *tracer* program available [here](https://github.com/Bouty92/Tracer "github.com/Bouty92/Tracer"), the result can be plotted directly with:<br />
 `$ ./test | tracer`<br />
