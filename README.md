@@ -147,7 +147,7 @@ These examples, once copied in a file *test.cc*, can be compiled with:<br />
 Or if *filters2.hh* is used, there is no separate compilation:<br />
 `$ g++ -std=c++11 test.cc -o test`
 
-Then, with the *tracer* program available [here](https://github.com/Bouty92/Tracer "github.com/Bouty92/Tracer"), the result can be plotted directly with:<br />
+Then, with the *tracer* program available [here](https://github.com/Bouty92/Tracer "github.com/Bouty92/Tracer"), the result can be plotted directly from a terminal with:<br />
 `$ ./test | tracer`<br />
 Or more sophisticatedly with:<br />
 `$ ./test | tracer -L input,output -T '$T_e=0.01$ s        $\omega_0=2\pi$ rad/s        $Q=0.7$' -PS`<br />
@@ -160,10 +160,20 @@ Which gives the figure below:<br />
 
 ## Python
 
+
+### Installation
+
+To install the module *filters* in the user space, execute in a terminal:
+
+`$ pip install python/ --user`
+
+
+### Example
+
 To feed the filter, call its instance direclty. It can be given a single new value at a time, or a list of successive values at once:
 
 ```
-from python.filters import *
+from python.filters import LP_second_order
 
 input_list = [ 0 ]*10 + [ 1 ]*190
 
