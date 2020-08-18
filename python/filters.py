@@ -65,7 +65,7 @@ class LP_first_order() :
 		self._Cx1 = 0
 
 		return self
-	
+
 	def _feed( self, x_k0 ) :
 
 		y_k0 = self._Cy1*self._y_k1 + self._Cx0*x_k0 + self._Cx1*self._x_k1
@@ -127,7 +127,7 @@ class LP_second_order() :
 		self._x_k1 = 0
 		self._y_k2 = 0
 		self._x_k2 = 0
-	
+
 	def _feed( self, x_k0 ) :
 
 		y_k0 = self._Cy1*self._y_k1 + self._Cy2*self._y_k2 + self._Cx0*x_k0 + self._Cx1*self._x_k1 + self._Cx2*self._x_k2
@@ -137,6 +137,47 @@ class LP_second_order() :
 		self._x_k1 = x_k0
 
 		return y_k0
+
+	def __call__( self, input ) :
+
+		if isinstance( input, collections.Iterable ) :
+			return [ self._feed( x ) for x in input ]
+		else :
+			return self._feed( input )
+
+
+class Moving_average() :
+	"""
+	Moving average filter
+
+	Parameter
+	---------
+	N : int
+		Number of elements used to compute the average.
+
+	"""
+
+	def __init__( self, N ) :
+		self._N = N
+
+		self.reset()
+
+	def reset( self ) :
+		self._buffer = [ 0 ]*self._N
+		self._i = 0
+		self._y_k0 = 0
+
+	def _feed( self, x_k0 ) :
+
+		self._y_k0 -= self._buffer[self._i]
+		self._buffer[self._i] = x_k0/self._N
+		self._y_k0 += self._buffer[self._i]
+
+		self._i += 1
+		if self._i >= self._N :
+			self._i = 0
+
+		return self._y_k0
 
 	def __call__( self, input ) :
 

@@ -19,6 +19,7 @@
 #include "filters.hh"
 #include <math.h>
 #include <stdexcept>
+#include <cstring>
 
 
 namespace filters
@@ -35,6 +36,8 @@ template class LP_first_order_impulse_matching<float>;
 template class LP_first_order_impulse_matching<double>;
 template class LP_second_order_bilinear<float>;
 template class LP_second_order_bilinear<double>;
+template class Moving_average<float>;
+template class Moving_average<double>;
 
 
 template <class T>
@@ -152,6 +155,56 @@ LP_second_order_bilinear<T>::LP_second_order_bilinear( const float Te, const dou
 	this->_Cx0 = Q*w2T2/den;
 	this->_Cx1 = 2*this->_Cx0;
 	this->_Cx2 = this->_Cx0;
+}
+
+
+
+//----------------//
+// Moving average //
+//----------------//
+
+
+template <class T>
+Moving_average<T>::Moving_average( const int N, const T* const x_ptr, T* const y_ptr ) :
+                   _N( N ), _x_ptr( x_ptr ), _y_ptr( y_ptr ), _i( 0 ), _y_k0( 0 )
+{
+	if ( _y_ptr == nullptr )
+		_y_ptr = &_y_k0;
+
+	_buffer = (T*) calloc( _N, sizeof( T ) );
+	if ( _buffer == nullptr )
+		throw std::runtime_error( "Failed to allocate memory: " + std::string( strerror( errno ) ) );
+}
+
+
+template <class T>
+void Moving_average<T>::update( const T x_k0 )
+{
+	_y_k0 -= _buffer[_i];
+	_buffer[_i] = x_k0/_N;
+	_y_k0 += _buffer[_i];
+
+	*_y_ptr = _y_k0;
+
+	if ( ++_i >= _N )
+		_i = 0;
+}
+
+
+template <class T>
+void Moving_average<T>::update()
+{
+	if ( _x_ptr == nullptr )
+		throw std::runtime_error( "Undefined filter input!" );
+
+	update( *_x_ptr );
+}
+
+
+template <class T>
+Moving_average<T>::~Moving_average()
+{
+	free( _buffer );
 }
 
 

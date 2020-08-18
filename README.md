@@ -6,7 +6,7 @@
 
 ### Files
 
-*filters.hh* and *filters2.hh* contain the template prototypes for low-pass first and second order recursive filters with different approximations (bilinear or homographic transforms, step or impulse response matching).
+*filters.hh* and *filters2.hh* contain the template prototypes for low-pass first and second order recursive filters with different approximations (bilinear or homographic transforms, step or impulse response matching), as well as a moving average filter.
 
 - ***filters.hh*** is to be used with the source file *filters.cc* in order to do separate compilation. In this case, the parameters have to be provided at instantiation time and parent filter templates cannot be instantiated (they are either abstracts or have a protected constructor).
 - ***filters2.hh*** contains directly the full template definitions in order to embed the filters without requiring separate compilation. In this case, the filters need to be initialized explicitly after instantiation.
@@ -128,11 +128,12 @@ main()
 
 	auto filter = filters::ptr_t<double>( new filters::LP_second_order_bilinear<double>( 0.01, 2*3.14, 0.7, &variable, &variable ) );
 
-	variable = 0;
 	for ( int i = 0 ; i < 200 ; i++ )
 	{
 		if ( i > 10 )
 			variable = 1;
+		else
+			variable = 0;
 
 		filter->update();
 

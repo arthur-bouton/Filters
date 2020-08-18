@@ -20,6 +20,7 @@
 #include <memory>
 #include <math.h>
 #include <stdexcept>
+#include <cstring>
 
 
 namespace filters
@@ -201,6 +202,66 @@ class LP_second_order
 	const T* _x_ptr;
 	T* _y_ptr;
 	T _y_k0, _y_k1, _y_k2, _x_k1, _x_k2;
+};
+
+
+template <class T>
+class Moving_average
+{
+	public:
+
+	typedef std::shared_ptr<Moving_average> ptr_t;
+
+	Moving_average( const int N, const T* const x_ptr = nullptr, T* const y_ptr = nullptr ) :
+                    _N( N ), _x_ptr( x_ptr ), _y_ptr( y_ptr ), _i( 0 ), _y_k0( 0 )
+	{
+		if ( _y_ptr == nullptr )
+			_y_ptr = &_y_k0;
+
+		_buffer = (T*) calloc( _N, sizeof( T ) );
+		if ( _buffer == nullptr )
+			throw std::runtime_error( "Failed to allocate memory: " + std::string( strerror( errno ) ) );
+	}
+
+	inline void set_input( const T* const x_ptr ) { _x_ptr = x_ptr; }
+	inline void set_output( T* const y_ptr ) { _y_ptr = y_ptr; }
+
+	void update( const T x_k0 )
+	{
+		_y_k0 -= _buffer[_i];
+		_buffer[_i] = x_k0/_N;
+		_y_k0 += _buffer[_i];
+
+		*_y_ptr = _y_k0;
+
+		if ( ++_i >= _N )
+			_i = 0;
+	}
+
+	void update()
+	{
+		if ( _x_ptr == nullptr )
+			throw std::runtime_error( "Undefined filter input!" );
+
+		update( *_x_ptr );
+	}
+
+	inline float get_output() const { return *_y_ptr; }
+
+	inline int get_N() const { return _N; }
+
+	~Moving_average()
+	{
+		free( _buffer );
+	}
+
+	protected:
+
+	int _N, _i;
+	const T* _x_ptr;
+	T* _y_ptr;
+	T* _buffer;
+	T _y_k0;
 };
 
 

@@ -165,6 +165,50 @@ class LP_second_order_bilinear : public LP_second_order<T>
 };
 
 
+
+//----------------//
+// Moving average //
+//----------------//
+
+
+template <class T>
+class Moving_average
+{
+	public:
+
+	typedef std::shared_ptr<Moving_average> ptr_t;
+
+	// N is the number of elements used to compute the average, x_ptr and y_ptr are optional pointers to the input and output variables:
+	Moving_average( const int N, const T* const x_ptr = nullptr, T* const y_ptr = nullptr );
+
+	// Set a pointer to the input variable:
+	inline void set_input( const T* const x_ptr ) { _x_ptr = x_ptr; }
+	// Set a pointer to the output variable:
+	inline void set_output( T* const y_ptr ) { _y_ptr = y_ptr; }
+
+	// Update the filter by passing the new input value as an argument:
+	void update( const T x_k0 );
+	// If no argument is provided, the pointer to the input variable is used:
+	void update();
+
+	// Return the current ouput of the filter:
+	inline float get_output() const { return *_y_ptr; }
+
+	// Return the number of elements used to compute the average:
+	inline int get_N() const { return _N; }
+
+	~Moving_average();
+
+	protected:
+
+	int _N, _i;
+	const T* _x_ptr;
+	T* _y_ptr;
+	T* _buffer;
+	T _y_k0;
+};
+
+
 }
 
 #endif
