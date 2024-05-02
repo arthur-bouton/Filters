@@ -3,7 +3,7 @@ Recursive filters
 
 Author: Arthur Bouton [arthur.bouton@gadz.org]
 """
-import collections
+import collections.abc
 import math
 
 
@@ -76,7 +76,7 @@ class LP_first_order() :
 
 	def __call__( self, input ) :
 
-		if isinstance( input, collections.Iterable ) :
+		if isinstance( input, collections.abc.Iterable ) :
 			return [ self._feed( x ) for x in input ]
 		else :
 			return self._feed( input )
@@ -140,7 +140,7 @@ class LP_second_order() :
 
 	def __call__( self, input ) :
 
-		if isinstance( input, collections.Iterable ) :
+		if isinstance( input, collections.abc.Iterable ) :
 			return [ self._feed( x ) for x in input ]
 		else :
 			return self._feed( input )
@@ -181,7 +181,7 @@ class Moving_average() :
 
 	def __call__( self, input ) :
 
-		if isinstance( input, collections.Iterable ) :
+		if isinstance( input, collections.abc.Iterable ) :
 			return [ self._feed( x ) for x in input ]
 		else :
 			return self._feed( input )
