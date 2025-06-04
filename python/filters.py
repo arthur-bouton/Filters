@@ -28,8 +28,7 @@ class LP_first_order() :
 		getattr( self, 'init_' + transform )( Te, wc )
 
 	def reset( self ) :
-		self._y_k1 = 0
-		self._x_k1 = 0
+		self._first_input = True
 
 	def init_bilinear( self, Te, wc ) :
 
@@ -68,6 +67,11 @@ class LP_first_order() :
 
 	def _feed( self, x_k0 ) :
 
+		if self._first_input :
+			self._y_k1 = x_k0
+			self._x_k1 = x_k0
+			self._first_input = False
+
 		y_k0 = self._Cy1*self._y_k1 + self._Cx0*x_k0 + self._Cx1*self._x_k1
 		self._y_k1 = y_k0
 		self._x_k1 = x_k0
@@ -105,10 +109,7 @@ class LP_second_order() :
 		getattr( self, 'init_' + transform )( Te, w0, Q )
 
 	def reset( self ) :
-		self._y_k1 = 0
-		self._x_k1 = 0
-		self._y_k2 = 0
-		self._x_k2 = 0
+		self._first_input = True
 
 	def init_bilinear( self, Te, w0, Q ) :
 
@@ -129,6 +130,13 @@ class LP_second_order() :
 		self._x_k2 = 0
 
 	def _feed( self, x_k0 ) :
+
+		if self._first_input :
+			self._y_k1 = x_k0
+			self._x_k1 = x_k0
+			self._y_k2 = x_k0
+			self._x_k2 = x_k0
+			self._first_input = False
 
 		y_k0 = self._Cy1*self._y_k1 + self._Cy2*self._y_k2 + self._Cx0*x_k0 + self._Cx1*self._x_k1 + self._Cx2*self._x_k2
 		self._y_k2 = self._y_k1
@@ -163,11 +171,15 @@ class Moving_average() :
 		self.reset()
 
 	def reset( self ) :
-		self._buffer = [ 0 ]*self._N
-		self._i = 0
-		self._y_k0 = 0
+		self._first_input = True
 
 	def _feed( self, x_k0 ) :
+
+		if self._first_input :
+			self._buffer = [ x_k0 ]*self._N
+			self._i = 0
+			self._y_k0 = x_k0
+			self._first_input = False
 
 		self._y_k0 -= self._buffer[self._i]
 		self._buffer[self._i] = x_k0/self._N
