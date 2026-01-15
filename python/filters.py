@@ -176,7 +176,7 @@ class Moving_average() :
 	def _feed( self, x_k0 ) :
 
 		if self._first_input :
-			self._buffer = [ x_k0 ]*self._N
+			self._buffer = [ x_k0/self._N ]*self._N
 			self._i = 0
 			self._y_k0 = x_k0
 			self._first_input = False
